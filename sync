@@ -1,0 +1,26 @@
+#!/bin/sh
+# -*- mode: sh -*-
+
+SCRIPT_NAME="${0##*/}"
+SCRIPT_RPATH="${0%$SCRIPT_NAME}"
+SCRIPT_PATH=`cd "${SCRIPT_RPATH:-.}" && pwd`
+
+FILES_FROM="${1:-$SCRIPT_PATH/list.txt}"
+FROM="${2:-/net/athlon/share}"
+TO="${3:-/share}"
+
+
+if [ ! -r "$FILES_FROM" ]; then
+    echo >&2 "could not read files list: \"$FILES_FROM\""
+    exit 1
+fi
+if [ -z "$FROM" ]; then
+    echo >&2 "source \"$FROM\" is empty"
+    exit 1
+fi
+if [ -z "$TO" ]; then
+    echo >&2 "target \"$TO\" is empty"
+    exit 1
+fi
+
+rsync -av -r --files-from="$FILES_FROM" "$FROM" "$TO"
